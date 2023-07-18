@@ -2,10 +2,10 @@ import config as cfg
 import database as db
 
 file = 'books/Над_пропасть_во_ржи.pdf'
+book_title = file[6:-4]
 punctuation_marks = ('.', ',', '!', '?', ':', ';')
 
 
-db.add_book(file[6:-4])
 
 # def get_parts():
 #     with open(file, 'r') as f:
