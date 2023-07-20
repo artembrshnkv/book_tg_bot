@@ -10,11 +10,12 @@ with conn.cursor() as cur:
     cur.execute("""
     CREATE TABLE IF NOT EXISTS users(
     id SERIAL PRIMARY KEY, 
-    first_name VARCHAR(20), 
-    second_name VARCHAR(30),
-    email VARCHAR(100),
-    tg_id INTEGER NOT NULL   
-    )
+    first_name VARCHAR(20),
+    second_name VARCHAR(30), 
+    email VARCHAR(100), 
+    wish_news BOOLEAN, 
+    tg_id INTEGER
+    )    
     """)
     conn.commit()
 
@@ -66,8 +67,17 @@ def add_pages(content, book_id):
         print('Page(s) successfully added')
 
 
-# def add_user(state, user_tg_id):
-#     with conn.cursor() as cur:
-#         cur.execute("""
-#
-#         """)
+def add_user(state, user_tg_id):
+    """Adds users to the table by fsm registration data"""
+    with conn.cursor() as cur:
+        cur.execute("""
+        INSERT INTO users (first_name, second_name, email, tg_id)
+        VALUES (%(first_name)s, %(second_name)s, %(email)s, %(tg_id)s)
+        """, {'first_name': state['first_name'],
+              'second_name': state['second_name'],
+              'email': state['email'],
+              'tg_id': user_tg_id
+              }
+                    )
+        conn.commit()
+

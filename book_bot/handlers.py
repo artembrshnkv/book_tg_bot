@@ -4,12 +4,12 @@ from aiogram.fsm.state import State, StatesGroup, default_state
 from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram.fsm import context
 
+import database as db
 from lexicon import lexicon
 import filters
 
-storage = MemoryStorage()
 
-router = Router(storage=storage)
+router = Router()
 
 
 class FSMRegistration(StatesGroup):
@@ -52,11 +52,13 @@ async def fsm_fill_wish_news(message: types.Message,
                              state: context.FSMContext):
     await state.update_data(email=message.text)
     await message.answer('Do you want to get news?')
+    await state.set_state(FSMRegistration.wish_news)
 
 
 @router.message(StateFilter(FSMRegistration.wish_news))
 async def fsm_end_registration(message: types.Message,
                                state: context.FSMContext):
-    await state.update_data(email=message.text)
+    await state.update_data(wish_news=message.text)
+    await db.add_user(state=state.get_data(), user_tg_id=message.from_user.id)
     await message.answer('Registration done successfully')
     await state.clear()

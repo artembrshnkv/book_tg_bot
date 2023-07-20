@@ -1,12 +1,15 @@
 import asyncio
 
+from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram import Bot, Dispatcher
 
 import config as cfg
 import handlers
 
+storage = MemoryStorage()
+
 bot = Bot(token=cfg.TOKEN)
-dp = Dispatcher()
+dp = Dispatcher(storage=storage)
 
 
 async def main():
