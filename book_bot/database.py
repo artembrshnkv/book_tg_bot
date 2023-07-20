@@ -6,30 +6,22 @@ conn = psql.connect(dbname=cfg.DATABASE_NAME, port=cfg.DB_PORT, host=cfg.DB_HOST
                     user=cfg.DB_USER, password=cfg.DB_PASSWORD)
 
 
-# # Checks if the book in table already
-# def _already_in_table(title):
-#     with conn.cursor() as cur:
-#         cur.execute("""
-#         SELECT * FROM books WHERE title = %s
-#         """, (title, ))
-#         return cur.fetchone()
-#
-#
-# # Gets book id by title
-# def gget_book_id_by_title(title):
-#     try:
-#         with conn.cursor() as cur:
-#             cur.execute("""
-#             SELECT * FROM books WHERE title = %s
-#             """, (title, ))
-#             return cur.fetchone()[0]
-#     except:
-#         print('No books with this title')
+with conn.cursor() as cur:
+    cur.execute("""
+    CREATE TABLE IF NOT EXISTS users(
+    id SERIAL PRIMARY KEY, 
+    first_name VARCHAR(20), 
+    second_name VARCHAR(30),
+    email VARCHAR(100),
+    tg_id INTEGER NOT NULL   
+    )
+    """)
+    conn.commit()
 
 
 def select_book(title, already_in_table=False, get_book_id_by_title=False):
     """Select book from books table.
-     If already_in_book = True returns boolean if book in table.
+     If already_in_table = True returns boolean if book in table.
      If get_book_id_by_title = True returns book id.
      If both False or both True returns None
      """
@@ -49,7 +41,6 @@ def select_book(title, already_in_table=False, get_book_id_by_title=False):
         print('No book with this title')
 
 
-#
 def add_book(title):
     """Adds book to the table, raise exception if it in already"""
     if not select_book(title, already_in_table=True):
@@ -65,7 +56,6 @@ def add_book(title):
         print('Book already in table')
 
 
-#
 def add_pages(content, book_id):
     """Adds book pages"""
     with conn.cursor() as cur:
@@ -74,3 +64,10 @@ def add_pages(content, book_id):
         """, {'content': content, 'book_id': book_id})
         conn.commit()
         print('Page(s) successfully added')
+
+
+# def add_user(state, user_tg_id):
+#     with conn.cursor() as cur:
+#         cur.execute("""
+#
+#         """)

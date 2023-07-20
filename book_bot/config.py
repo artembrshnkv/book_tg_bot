@@ -12,5 +12,5 @@ DB_HOST = env('DB_HOST')
 DB_USER = env('DB_USER')
 DB_PASSWORD = env('DB_PASSWORD')
 
-PAGE_SIZE = env('PAGE_SIZE')
+
 
