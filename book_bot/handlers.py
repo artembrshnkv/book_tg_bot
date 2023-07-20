@@ -34,7 +34,7 @@ async def fsm_fill_firstname(message: types.Message,
 @router.message(StateFilter(FSMRegistration.first_name), filters.IsNameOrSurname)
 async def fsm_fill_lastname(message: types.Message,
                             state: context.FSMContext):
-    await state.update_data(firstname=message.text)
+    await state.update_data(first_name=message.text)
     await message.answer('Please enter your lastname')
     await state.set_state(FSMRegistration.last_name)
 
@@ -44,7 +44,7 @@ async def fsm_fill_email(message: types.Message,
                          state: context.FSMContext):
     await state.update_data(last_name=message.text)
     await message.answer('Please enter your email')
-    await state.set_state(FSMRegistration.wish_news)
+    await state.set_state(FSMRegistration.email)
 
 
 @router.message(StateFilter(FSMRegistration.email))
@@ -59,6 +59,6 @@ async def fsm_fill_wish_news(message: types.Message,
 async def fsm_end_registration(message: types.Message,
                                state: context.FSMContext):
     await state.update_data(wish_news=message.text)
-    await db.add_user(state=state.get_data(), user_tg_id=message.from_user.id)
+    db.add_user(state=await state.get_data(), user_tg_id=message.from_user.id)
     await message.answer('Registration done successfully')
     await state.clear()

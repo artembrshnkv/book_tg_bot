@@ -6,20 +6,6 @@ conn = psql.connect(dbname=cfg.DATABASE_NAME, port=cfg.DB_PORT, host=cfg.DB_HOST
                     user=cfg.DB_USER, password=cfg.DB_PASSWORD)
 
 
-with conn.cursor() as cur:
-    cur.execute("""
-    CREATE TABLE IF NOT EXISTS users(
-    id SERIAL PRIMARY KEY, 
-    first_name VARCHAR(20),
-    second_name VARCHAR(30), 
-    email VARCHAR(100), 
-    wish_news BOOLEAN, 
-    tg_id INTEGER
-    )    
-    """)
-    conn.commit()
-
-
 def select_book(title, already_in_table=False, get_book_id_by_title=False):
     """Select book from books table.
      If already_in_table = True returns boolean if book in table.
@@ -71,11 +57,12 @@ def add_user(state, user_tg_id):
     """Adds users to the table by fsm registration data"""
     with conn.cursor() as cur:
         cur.execute("""
-        INSERT INTO users (first_name, second_name, email, tg_id)
-        VALUES (%(first_name)s, %(second_name)s, %(email)s, %(tg_id)s)
+        INSERT INTO users (first_name, second_name, email, wish_news, tg_id)
+        VALUES (%(first_name)s, %(second_name)s, %(email)s, %(wish_news)s, %(tg_id)s)
         """, {'first_name': state['first_name'],
-              'second_name': state['second_name'],
+              'second_name': state['last_name'],
               'email': state['email'],
+              'wish_news': state['wish_news'],
               'tg_id': user_tg_id
               }
                     )
