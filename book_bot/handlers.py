@@ -1,7 +1,6 @@
 from aiogram import Router, types
 from aiogram.filters import Command, StateFilter
 from aiogram.fsm.state import State, StatesGroup, default_state
-from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram.fsm import context
 
 import database as db

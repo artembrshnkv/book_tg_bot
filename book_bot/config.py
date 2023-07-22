@@ -4,7 +4,7 @@ env = Env()
 env.read_env()
 
 TOKEN = env('API_TOKEN')
-ADMIN_ID_LIST = env('ADMIN_ID_LIST')
+ADMINS_ID_LIST = env('ADMINS_ID_LIST')
 
 DATABASE_NAME = env('DATABASE_NAME')
 DB_PORT = env('DB_PORT')
