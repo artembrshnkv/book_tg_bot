@@ -39,7 +39,8 @@ def get_pages(file, max_page_size, book_title):
                         page_size -= 1
                         content = read_file[start_index:start_index + page_size + 1]
                     # print(f'{page_number}.' + content + '\n\n')
-                    db.add_pages(page_number=page_number, content=content )
+                    db.add_pages(page_number=page_number, content=content,
+                                 book_id=db.select_book(title=book_title, get_book_id_by_title=True))
                     total_len += len(read_file[start_index:start_index + page_size + 1])
                     page_number += 1
                     start_index += page_size + 1
@@ -50,4 +51,4 @@ def get_pages(file, max_page_size, book_title):
                     break
 
 
-get_pages(file_path, 1000)
+

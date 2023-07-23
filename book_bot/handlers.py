@@ -29,7 +29,7 @@ async def start_command_handler(message: types.Message):
     await message.answer(lexicon['/start'])
 
 
-@router.message(Command('registration'), StateFilter(default_state))
+@router.message(Command('reg'), StateFilter(default_state))
 async def fsm_fill_firstname(message: types.Message,
                              state: context.FSMContext):
     await message.answer('Please enter your name:')
@@ -47,6 +47,7 @@ async def fsm_fill_lastname(message: types.Message,
 @router.message(StateFilter(FSMRegistration.last_name), filters.IsNameOrSurname)
 async def fsm_fill_email(message: types.Message,
                          state: context.FSMContext):
+    await message.answer(f'{await state.get_data()}')
     await state.update_data(last_name=message.text)
     await message.answer('Please enter your email')
     await state.set_state(FSMRegistration.email)

@@ -6,9 +6,12 @@ from aiogram import Router, types, F
 
 import book_bot.database as db
 import book_bot.filters as filters
+import book_bot.utils as utils
 
 router = Router()
 router.message.filter(filters.IsAdmin)
+
+PAGE_SIZE = 1000
 
 
 class FSMAddBook(StatesGroup):
@@ -19,25 +22,27 @@ class FSMAddBook(StatesGroup):
 @router.message(Command('add_book'), StateFilter(default_state))
 async def fsm_fill_title(message: types.Message,
                          state: context.FSMContext):
-    await message.answer('Enter book title')
+    await message.answer("Введите название книги")
     await state.set_state(FSMAddBook.title)
 
 
 @router.message(StateFilter(FSMAddBook.title))
 async def fsm_send_file(message: types.Message,
                         state: context.FSMContext):
-    try:
-        db.add_book(title=message.text)
-    except:
-        await message.answer('Some problems')
-    await message.answer('Send .txt file ')
-    await state.set_state(FSMAddBook.file)
+    if db.select_book(title=message.text, already_in_table=True):
+        await message.answer('Книга с таким названием уже существует')
+    else:
+        await state.update_data(title=message.text)
+        await message.answer('Send .txt file')
+        await state.set_state(FSMAddBook.file)
 
 
 @router.message(StateFilter(FSMAddBook.file), F.document.mime_type == 'text/plain')
 async def fsm_end_adding(message: types.Message,
                          state: context.FSMContext):
-    await state.update_data(file=message.document.file_id)
+    book_title = await state.get_data()
+    db.add_book(title=book_title)
+    utils.get_pages(file=message.document.file_id, max_page_size=PAGE_SIZE, book_title=book_title)
     await message.answer('Book added successfully')
     await state.clear()
 
