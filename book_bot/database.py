@@ -29,7 +29,8 @@ def select_book(title, already_in_table=False, get_book_id_by_title=False):
 
 
 def add_book(title):
-    """Adds book to the table, raise exception if it in already"""
+    """Adds book to the table, raise exception if its in already"""
+    message = ''
     if not select_book(title, already_in_table=True):
         with conn.cursor() as cur:
             cur.execute("""
@@ -39,16 +40,18 @@ def add_book(title):
                         {'title': title})
             conn.commit()
             print('Book added successfully')
+            message = 'Book added successfully'
     else:
         print('Book already in table')
+        message = 'Book already in table'
 
 
-def add_pages(content, book_id):
+def add_pages(page_number, content, book_id):
     """Adds book pages"""
     with conn.cursor() as cur:
         cur.execute("""
-        INSERT INTO pages (content, book_id) VALUES (%(content)s, %(book_id)s)
-        """, {'content': content, 'book_id': book_id})
+        INSERT INTO pages (page_number, content, book_id) VALUES (%(page_number)s, %(content)s, %(book_id)s)
+        """, {'page_number': page_number, 'content': content, 'book_id': book_id})
         conn.commit()
         print('Page(s) successfully added')
 

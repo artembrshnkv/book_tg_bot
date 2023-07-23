@@ -26,7 +26,10 @@ async def fsm_fill_title(message: types.Message,
 @router.message(StateFilter(FSMAddBook.title))
 async def fsm_send_file(message: types.Message,
                         state: context.FSMContext):
-    await state.update_data(title=message.text)
+    try:
+        db.add_book(title=message.text)
+    except:
+        await message.answer('Some problems')
     await message.answer('Send .txt file ')
     await state.set_state(FSMAddBook.file)
 
