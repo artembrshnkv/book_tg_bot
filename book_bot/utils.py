@@ -1,8 +1,4 @@
-import codecs
 import copy
-
-import config as cfg
-import database as db
 
 file = 'books/Над_пропасть_во_ржи.txt'
 book_title = file[6:-4]

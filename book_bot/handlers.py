@@ -2,6 +2,7 @@ from aiogram import Router, types
 from aiogram.filters import Command, StateFilter
 from aiogram.fsm.state import State, StatesGroup, default_state
 from aiogram.fsm import context
+from aiogram import F
 
 import database as db
 from lexicon import lexicon
@@ -16,6 +17,11 @@ class FSMRegistration(StatesGroup):
     last_name = State()
     email = State()
     wish_news = State()
+
+
+# @router.message()
+# async def get_json(message: types.Message):
+#     print(message.json(indent=4, exclude_none=True))
 
 
 @router.message(Command('start'))
