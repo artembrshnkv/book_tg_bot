@@ -5,7 +5,7 @@ from aiogram import Bot, Dispatcher
 
 import config as cfg
 import handlers
-from fsm import add_book
+from fsm import registartion, add_book
 
 storage = MemoryStorage()
 
@@ -14,7 +14,7 @@ dp = Dispatcher(storage=storage)
 
 
 async def main():
-    dp.include_routers(handlers.router, add_book.router)
+    dp.include_routers(handlers.router, registartion.router, add_book.router)
     await dp.start_polling(bot)
 
 

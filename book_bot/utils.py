@@ -39,8 +39,11 @@ def get_pages(file, max_page_size, book_title):
                         page_size -= 1
                         content = read_file[start_index:start_index + page_size + 1]
                     # print(f'{page_number}.' + content + '\n\n')
-                    db.add_pages(page_number=page_number, content=content,
-                                 book_id=db.select_book(title=book_title, get_book_id_by_title=True))
+                    if not db.select_book(title=book_title, already_in_table=True):
+                        db.add_pages(page_number=page_number, content=content,
+                                     book_id=db.select_book(title=book_title, get_book_id_by_title=True))
+                    else:
+                        print('book already in table')
                     total_len += len(read_file[start_index:start_index + page_size + 1])
                     page_number += 1
                     start_index += page_size + 1
@@ -49,6 +52,3 @@ def get_pages(file, max_page_size, book_title):
                 except IndexError:
                     print(f'{page_number}.' + read_file[start_index:])
                     break
-
-
-

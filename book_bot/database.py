@@ -6,6 +6,7 @@ conn = psql.connect(dbname=cfg.DATABASE_NAME, port=cfg.DB_PORT, host=cfg.DB_HOST
                     user=cfg.DB_USER, password=cfg.DB_PASSWORD)
 
 
+
 def select_book(title, already_in_table=False, get_book_id_by_title=False):
     """Select book from books table.
      If already_in_table = True returns boolean if book in table.

@@ -41,9 +41,13 @@ async def fsm_send_file(message: types.Message,
 async def fsm_end_adding(message: types.Message,
                          state: context.FSMContext):
     book_title = await state.get_data()
-    db.add_book(title=book_title)
-    utils.get_pages(file=message.document.file_id, max_page_size=PAGE_SIZE, book_title=book_title)
-    await message.answer('Book added successfully')
+    await message.answer(book_title)
+    try:
+        db.add_book(title=book_title['title'])
+        utils.get_pages(file=message.document.file_id, max_page_size=PAGE_SIZE, book_title=book_title['title'])
+        await message.answer('Book added successfully')
+    except:
+        await message.answer('Some problems')
     await state.clear()
 
 
