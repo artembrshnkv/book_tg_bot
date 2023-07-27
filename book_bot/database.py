@@ -41,10 +41,8 @@ def add_book(title):
                         {'title': title})
             conn.commit()
             print('Book added successfully')
-            message = 'Book added successfully'
     else:
         print('Book already in table')
-        message = 'Book already in table'
 
 
 def add_pages(page_number, content, book_id):

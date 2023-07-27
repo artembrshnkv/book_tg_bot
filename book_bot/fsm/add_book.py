@@ -7,6 +7,13 @@ from aiogram import Router, types, F
 import book_bot.database as db
 import book_bot.filters as filters
 import book_bot.utils as utils
+from book_bot.bot import bot
+
+import os
+
+books_path = r"C:\Users\leoba\PycharmProjects\book_tg_bot\book_bot\books"
+
+
 
 router = Router()
 router.message.filter(filters.IsAdmin)
@@ -40,17 +47,15 @@ async def fsm_send_file(message: types.Message,
 @router.message(StateFilter(FSMAddBook.file), F.document.mime_type == 'text/plain')
 async def fsm_end_adding(message: types.Message,
                          state: context.FSMContext):
-    book_title = await state.get_data()
-    await message.answer(book_title)
-    try:
-        db.add_book(title=book_title['title'])
-        utils.get_pages(file=message.document.file_id, max_page_size=PAGE_SIZE, book_title=book_title['title'])
-        await message.answer('Book added successfully')
-    except:
-        await message.answer('Some problems')
-    await state.clear()
+    # state_data = await state.get_data()
+    # await message.answer(f'{state_data}')
+    # await message.answer(message.document.file_id)
+    # db.add_book(title=state_data['title'])
+    # utils.get_pages(file=message.document.file_id, max_page_size=PAGE_SIZE, book_title=state_data['title'])
+    await bot.download_file(file_path=message.document.file_id, destination=books_path)
 
 
-@router.message(StateFilter(FSMAddBook.file), ~F.document.mime_type == 'text/plain')
+@router.message(StateFilter(FSMAddBook.file))
 async def warning_fsm_end_adding(message: types.Message):
     await message.answer('Отправьте .txt файл')
+
