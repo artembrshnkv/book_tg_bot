@@ -36,4 +36,4 @@ def get_pages(file, max_page_size, book_title):
 
 
 if __name__ == '__main__':
-    print(os.path.abspath('books'))
+    print(get_pages(file=file_path, max_page_size=1000, book_title="Над пропастью во ржи"))
