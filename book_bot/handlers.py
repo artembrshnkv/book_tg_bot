@@ -27,3 +27,9 @@ async def show_books(message: types.Message):
     await message.answer(*db.get_books())
 
 
+@router.message(Command('read'))
+async def read(message: types.Message):
+    await message.answer(db.get_actual_page_content(book_id=db.select_book(title='Над пропастью во ржи',
+                                                                           get_book_id_by_title=True),
+                                                    page_number=1))
+

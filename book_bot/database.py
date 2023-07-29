@@ -98,7 +98,7 @@ def get_books():
         cur.execute("""
         SELECT * FROM books;
         """)
-        return [f'{key+1}. {title[1]}' for key, title in enumerate(cur.fetchall())]
+        return [f'{key+1}. (id={value[0]}) {value[1]}' for key, value in enumerate(cur.fetchall())]
 
 
 def _select_actual_page(user_tg_id, book_id):
@@ -139,7 +139,7 @@ def chose_books_page(user_tg_id, book_id):
             return _select_actual_page(user_tg_id=user_tg_id, book_id=book_id)
 
 
-def get_actual_page(book_id, page_number):
+def get_actual_page_content(book_id, page_number):
     with conn.cursor() as cur:
         cur.execute("""
         SELECT content FROM pages 
@@ -151,8 +151,33 @@ def get_actual_page(book_id, page_number):
         return cur.fetchone()[0]
 
 
+def next_page(user_tg_id, book_id):
+    with conn.cursor() as cur:
+        cur.execute("""
+        UPDATE users_books_pages SET page_number = page_number - 1
+        WHERE (user_tg_id = %(user_tg_id)s and book_id = %(book_id)s) 
+        """, {'user_tg_id': user_tg_id,
+              'book_id': book_id
+              }
+                    )
+        conn.commit()
+
+
+def previous_page(user_tg_id, book_id):
+    with conn.cursor() as cur:
+        cur.execute("""
+        UPDATE users_books_pages SET page_number = page - 1
+        WHERE (user_tg_id = %(user_tg_id)s and %(book_id)s) 
+        """, {'user_tg_id': user_tg_id,
+              'book_id': book_id
+              }
+                    )
+        conn.commit()
+
+
 if __name__ == '__main__':
     # print(chose_books_page(user_tg_id=890681558,
     #                        book_id=select_book(title="Над пропастью во ржи", get_book_id_by_title=True)))
-    print(get_actual_page(book_id=select_book(title='Над пропастью во ржи', get_book_id_by_title=True),
-                          page_number=4))
+    print(get_actual_page_content(book_id=select_book(title='Над пропастью во ржи',
+                                                      get_book_id_by_title=True),
+                                  page_number=200))

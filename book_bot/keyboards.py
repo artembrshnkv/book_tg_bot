@@ -13,8 +13,14 @@ class PageCallbackFactory(CallbackData, prefix='page'):
 pagination_kb = InlineKeyboardBuilder()
 
 
-def create_pagination_kb(*buttons):
-    pagination_kb.row(*[lexicon.lexicon[button] for button in buttons if button in lexicon.lexicon])
-
+def create_pagination_kb(book_id, page_number):
+    pagination_kb.export().clear()
+    pagination_kb.row(InlineKeyboardButton(text='Назад', callback_data='backward'),
+                      InlineKeyboardButton(text=f'{page_number}/{1000}', callback_data=f'{page_number}'),
+                      InlineKeyboardButton(text='Вперед',
+                                           callback_data=PageCallbackFactory(book_id=book_id,
+                                                                             page_number=page_number+1).pack())
+                      )
+    return pagination_kb.as_markup()
 
 
