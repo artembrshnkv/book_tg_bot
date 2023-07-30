@@ -6,10 +6,7 @@ from aiogram import Router, types, F
 
 import book_bot.database as db
 import book_bot.filters as filters
-import book_bot.utils as utils
 from book_bot.bot import bot
-
-import os
 
 books_path = r"C:\Users\leoba\PycharmProjects\book_tg_bot\book_bot\books"
 

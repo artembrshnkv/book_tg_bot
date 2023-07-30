@@ -11,42 +11,47 @@ class PageCallbackFactory(CallbackData, prefix='page'):
     page_number: int
 
 
+class MenuCallbackFactory(CallbackData, prefix='menu'):
+    book_id: int
+    page_number: int
+
+
 pagination_kb = InlineKeyboardBuilder()
 
 
 
-def create_keyboard(book_id, page_number):
-    keyboard = InlineKeyboardMarkup(inline_keyboard=[
+def create_pagination_kb(book_id, page_number):
+    pagination_keyboard = InlineKeyboardMarkup(inline_keyboard=[
         [
             InlineKeyboardButton(text='<<',
                                  callback_data=PageCallbackFactory(book_id=book_id,
-                                                                   page_number=page_number - 1).pack()),
+                                                                   page_number=utils.get_correct_page_range(
+                                                                       book_id=book_id,
+                                                                       page_number=page_number - 1)).pack()),
             InlineKeyboardButton(text=f'{page_number}/{db.get_min_max_page_number(book_id=book_id, get_max_page=True)}',
-                                 callback_data=f'{page_number}'),
+                                 callback_data=MenuCallbackFactory(book_id=book_id,
+                                                                   page_number=page_number).pack()),
             InlineKeyboardButton(text='>>',
                                  callback_data=PageCallbackFactory(book_id=book_id,
-                                                                   page_number=page_number + 1).pack())
+                                                                   page_number=utils.get_correct_page_range(
+                                                                       book_id=book_id,
+                                                                       page_number=page_number + 1)).pack())
         ]]
                                     )
-    return keyboard
+    return pagination_keyboard
 
 
-def create_pagination_kb(book_id, page_number):
-    # pagination_kb.export().clear()
-    pagination_kb.row(InlineKeyboardButton(text='Назад', callback_data='backward'),
-                      InlineKeyboardButton(text=f'{page_number}/{1000}', callback_data=f'{page_number}'),
-                      InlineKeyboardButton(text='Вперед',
-                                           callback_data=PageCallbackFactory(book_id=book_id,
-                                                                             page_number=page_number + 1).pack())
-                      )
-    return pagination_kb.as_markup()
+
+def create_menu_kb(book_id, page_number, buttons_per_side):
+    menu_kb = InlineKeyboardBuilder()
+    menu_kb.add(*[InlineKeyboardButton(text=f'{n}',
+                                       callback_data=PageCallbackFactory(book_id=book_id,
+                                                                         page_number=n).pack()) for n in utils.get_menu(
+        book_id=book_id,
+        page_number=page_number,
+        buttons_per_side=buttons_per_side)])
+    return menu_kb.as_markup()
 
 
-create_pagination_kb(book_id=10, page_number=4)
-
-# if __name__ == '__main__':
-#     print(pagination_kb.export())
-#     # pagination_kb.export()
-#     print(pagination_kb.export().clear())
-#     print(pagination_kb.row(InlineKeyboardButton(text='text', callback_data='gbdvdc')).as_markup())
-#     print(keyboard)
+if __name__ == '__main__':
+    print(create_menu_kb(book_id=10, page_number=330, buttons_per_side=96))

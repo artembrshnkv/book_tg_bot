@@ -1,5 +1,4 @@
 import psycopg2 as psql
-from psycopg2.errors import UniqueViolation, InFailedSqlTransaction
 
 import config as cfg
 
@@ -46,13 +45,12 @@ def select_book(title, already_in_table=False, get_book_id_by_title=False):
                 return bool(cur.fetchone())
             elif get_book_id_by_title:
                 return cur.fetchone()[0]
-    except:
+    except():
         print('No book with this title')
 
 
 def add_book(title):
     """Adds book to the table, raise exception if its in already"""
-    message = ''
     if not select_book(title, already_in_table=True):
         with conn.cursor() as cur:
             cur.execute("""
@@ -120,7 +118,7 @@ def _select_actual_page(user_tg_id, book_id):
 
 def chose_books_page(user_tg_id, book_id):
     """
-    Selects actual page of books that user read.
+    Selects actual page of book that user read.
     Creates row if it is not in table yet.
     """
     with conn.cursor() as cur:
@@ -151,25 +149,15 @@ def get_actual_page_content(book_id, page_number):
         return cur.fetchone()[0]
 
 
-def next_page(user_tg_id, book_id):
+def update_actual_page_number(user_tg_id, book_id, page_number):
     with conn.cursor() as cur:
         cur.execute("""
-        UPDATE users_books_pages SET page_number = page_number - 1
-        WHERE (user_tg_id = %(user_tg_id)s and book_id = %(book_id)s) 
+        UPDATE users_books_pages
+        SET page_number = %(page_number)s
+        WHERE (user_tg_id = %(user_tg_id)s and book_id = %(book_id)s)
         """, {'user_tg_id': user_tg_id,
-              'book_id': book_id
-              }
-                    )
-        conn.commit()
-
-
-def previous_page(user_tg_id, book_id):
-    with conn.cursor() as cur:
-        cur.execute("""
-        UPDATE users_books_pages SET page_number = page - 1
-        WHERE (user_tg_id = %(user_tg_id)s and %(book_id)s) 
-        """, {'user_tg_id': user_tg_id,
-              'book_id': book_id
+              'book_id': book_id,
+              'page_number': page_number
               }
                     )
         conn.commit()
@@ -195,12 +183,19 @@ def get_min_max_page_number(book_id, get_max_page=False, get_min_page=False):
         return None
 
 
+def get_page_numbers_for_menu(book_id, page_number, thresholds):
+    with conn.cursor() as cur:
+        cur.execute("""
+        SELECT page_number FROM pages
+        WHERE (book_id = %(book_id)s and %(lower_threshold)s < page_number and page_number < %(upper_threshold)s)
+        """, {'book_id': book_id,
+              'page_number': page_number,
+              'lower_threshold': thresholds['lower_threshold'],
+              'upper_threshold': thresholds['upper_threshold']}
+                    )
+        return [n[0] for n in cur.fetchall()]
+
+
 if __name__ == '__main__':
-    # print(chose_books_page(user_tg_id=890681558,
-    #                        book_id=select_book(title="Над пропастью во ржи", get_book_id_by_title=True)))
-    # print(get_actual_page_content(book_id=select_book(title='Над пропастью во ржи',
-    #                                                   get_book_id_by_title=True),
-    #                               page_number=200))
-    print(get_min_max_page_number(book_id=10, get_min_page=True))
-
-
+    print(get_page_numbers_for_menu(book_id=10, page_number=330, thresholds={'lower_threshold': 9,
+                                                                             'upper_threshold': 51}))

@@ -7,6 +7,7 @@ from aiogram import F
 import database as db
 from lexicon import lexicon
 import filters
+import keyboards as kb
 
 
 router = Router()
