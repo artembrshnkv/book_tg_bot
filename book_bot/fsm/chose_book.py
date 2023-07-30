@@ -27,8 +27,8 @@ async def show_book(message: types.Message,
     actual_page_number = db.chose_books_page(user_tg_id=message.from_user.id, book_id=message.text)
     await message.answer(db.get_actual_page_content(book_id=message.text,
                                                     page_number=actual_page_number),
-                         reply_markup=kb.create_pagination_kb(book_id=message.text,
-                                                              page_number=actual_page_number))
+                         reply_markup=kb.create_keyboard(book_id=message.text,
+                                                         page_number=actual_page_number))
     await state.clear()
 
 
@@ -39,8 +39,9 @@ async def set_next_page(callback: CallbackQuery,
     asked_book_id = callback_data.pack().split(':')[-2]
     await callback.message.answer(db.get_actual_page_content(book_id=asked_book_id,
                                                              page_number=asked_page),
-                                  reply_markup=kb.create_pagination_kb(book_id=int(asked_book_id),
-                                                                       page_number=int(asked_page)))
+                                  reply_markup=kb.create_keyboard(book_id=int(asked_book_id),
+                                                                  page_number=int(asked_page)))
+    await callback.answer()
     # callback.message.reply_markup.inline_keyboard.clear()
 
 

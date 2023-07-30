@@ -175,9 +175,32 @@ def previous_page(user_tg_id, book_id):
         conn.commit()
 
 
+def get_min_max_page_number(book_id, get_max_page=False, get_min_page=False):
+    if get_max_page and get_min_page or \
+            not get_max_page and not get_min_page:
+        return None
+    try:
+        with conn.cursor() as cur:
+            cur.execute("""
+            SELECT page_number
+            FROM pages
+            WHERE book_id = %(book_id)s
+            """, {'book_id': book_id}
+                        )
+            if get_max_page:
+                return cur.fetchall()[-1][0]
+            elif get_min_page:
+                return cur.fetchall()[0][0]
+    except():
+        return None
+
+
 if __name__ == '__main__':
     # print(chose_books_page(user_tg_id=890681558,
     #                        book_id=select_book(title="Над пропастью во ржи", get_book_id_by_title=True)))
-    print(get_actual_page_content(book_id=select_book(title='Над пропастью во ржи',
-                                                      get_book_id_by_title=True),
-                                  page_number=200))
+    # print(get_actual_page_content(book_id=select_book(title='Над пропастью во ржи',
+    #                                                   get_book_id_by_title=True),
+    #                               page_number=200))
+    print(get_min_max_page_number(book_id=10, get_min_page=True))
+
+

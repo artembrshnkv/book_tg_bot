@@ -1,9 +1,17 @@
 import database as db
 
-import os
-
 file_path = 'books/Над_пропасть_во_ржи.txt'
 punctuation_marks = ('.', ',', '!', '?', ':', ';')
+
+
+def get_correct_page_range(book_id, page_number):
+    if db.get_min_max_page_number(book_id=book_id, get_min_page=True) < page_number < \
+            db.get_min_max_page_number(book_id=book_id, get_max_page=True):
+        return page_number
+    else:
+        return min(db.get_min_max_page_number(book_id=book_id, get_max_page=True),
+                   max(db.get_min_max_page_number(book_id=book_id, get_min_page=True), page_number))
+    # return db.get_min_page_number(book_id=book_id) < page_number < db.get_max_page_number(book_id=book_id)
 
 
 def get_pages(file, max_page_size, book_title):
@@ -36,4 +44,4 @@ def get_pages(file, max_page_size, book_title):
 
 
 if __name__ == '__main__':
-    print(get_pages(file=file_path, max_page_size=1000, book_title="Над пропастью во ржи"))
+    print(get_correct_page_range(book_id=10, page_number=43))
