@@ -96,7 +96,7 @@ def get_books():
         cur.execute("""
         SELECT * FROM books;
         """)
-        return [f'{key+1}. (id={value[0]}) {value[1]}' for key, value in enumerate(cur.fetchall())]
+        return cur.fetchall()
 
 
 def _select_actual_page(user_tg_id, book_id):

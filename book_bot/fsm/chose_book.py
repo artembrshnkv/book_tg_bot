@@ -13,23 +13,26 @@ router = Router()
 book_id = State()
 
 
+@router.message(Command('all_books'))
+async def get_all_books(message: types.Message):
+    await message.answer('Список всех книг:')
+    await message.answer(*[f'{key+1}. (id={value[0]}) {value[1]}' for key, value in enumerate(db.get_books())])
+
+
 @router.message(Command('chose_book'), StateFilter(default_state))
-async def chose_book(message: types.Message,
-                     state: context.FSMContext):
-    await message.answer('Введите id книги:')
-    await state.set_state(book_id)
-    await message.answer(*db.get_books())
+async def chose_book(message: types.Message):
+    await message.answer(text='Выберите номер книги:',
+                         reply_markup=kb.create_all_books_kb(user_tg_id=message.from_user.id))
 
-
-@router.message(StateFilter(book_id), F.text.isdigit())
-async def show_book(message: types.Message,
-                    state: context.FSMContext):
-    actual_page_number = db.chose_books_page(user_tg_id=message.from_user.id, book_id=message.text)
-    await message.answer(db.get_actual_page_content(book_id=message.text,
-                                                    page_number=actual_page_number),
-                         reply_markup=kb.create_pagination_kb(book_id=message.text,
-                                                              page_number=actual_page_number))
-    await state.clear()
+# @router.message(StateFilter(book_id), F.text.isdigit())
+# async def show_book(message: types.Message,
+#                     state: context.FSMContext):
+#     actual_page_number = db.chose_books_page(user_tg_id=message.from_user.id, book_id=message.text)
+#     await message.answer(db.get_actual_page_content(book_id=message.text,
+#                                                     page_number=actual_page_number),
+#                          reply_markup=kb.create_pagination_kb(book_id=message.text,
+#                                                               page_number=actual_page_number))
+#     await state.clear()
 
 
 @router.callback_query(kb.PageCallbackFactory.filter())
