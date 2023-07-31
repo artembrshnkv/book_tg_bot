@@ -16,7 +16,7 @@ book_id = State()
 @router.message(Command('all_books'))
 async def get_all_books(message: types.Message):
     await message.answer('Список всех книг:')
-    all_books_list = [f'{key+1}. (id={value[0]}) {value[1]}' for key, value in enumerate(db.get_books())]
+    all_books_list = [f'{key+1}. {value[1]}' for key, value in enumerate(db.get_books())]
     await message.answer('\n'.join(all_books_list))
 
 
@@ -44,10 +44,10 @@ async def set_next_page(callback: CallbackQuery,
     db.update_actual_page_number(user_tg_id=callback.from_user.id,
                                  book_id=asked_book_id,
                                  page_number=asked_page_number)
-    await callback.message.answer(db.get_actual_page_content(book_id=asked_book_id,
-                                                             page_number=asked_page_number),
-                                  reply_markup=kb.create_pagination_kb(book_id=int(asked_book_id),
-                                                                       page_number=int(asked_page_number)))
+    await callback.message.edit_text(db.get_actual_page_content(book_id=asked_book_id,
+                                                                page_number=asked_page_number),
+                                     reply_markup=kb.create_pagination_kb(book_id=int(asked_book_id),
+                                                                          page_number=int(asked_page_number)))
     await callback.answer()
 
 
@@ -56,8 +56,8 @@ async def get_book_menu(callback: CallbackQuery,
                         callback_data: kb.MenuCallbackFactory):
     asked_page_number = callback_data.pack().split(':')[-1]
     asked_book_id = callback_data.pack().split(':')[-2]
-    await callback.message.answer(text='Выберите страницу:',
-                                  reply_markup=kb.create_menu_kb(book_id=int(asked_book_id),
-                                                                 page_number=int(asked_page_number),
-                                                                 buttons_per_side=96))
+    await callback.message.edit_text(text='Выберите страницу:',
+                                     reply_markup=kb.create_menu_kb(book_id=int(asked_book_id),
+                                                                    page_number=int(asked_page_number),
+                                                                    buttons_per_side=96))
     await callback.answer()

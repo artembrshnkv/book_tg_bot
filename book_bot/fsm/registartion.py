@@ -52,6 +52,6 @@ async def fsm_fill_wish_news(message: types.Message,
 async def fsm_end_registration(message: types.Message,
                                state: context.FSMContext):
     await state.update_data(wish_news=message.text)
-    db.add_user(state=await state.get_data(), user_tg_id=message.from_user.id)
+    db.add_user(data=await state.get_data(), user_tg_id=message.from_user.id)
     await message.answer('Registration done successfully')
     await state.clear()

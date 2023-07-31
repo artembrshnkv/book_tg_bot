@@ -74,20 +74,30 @@ def add_pages(page_number, content, book_id):
         print('Page(s) successfully added')
 
 
-def add_user(state, user_tg_id):
+def add_user(data, user_tg_id):
     """Adds users to the table by fsm registration data"""
     with conn.cursor() as cur:
         cur.execute("""
         INSERT INTO users (first_name, second_name, email, wish_news, tg_id)
         VALUES (%(first_name)s, %(second_name)s, %(email)s, %(wish_news)s, %(tg_id)s)
-        """, {'first_name': state['first_name'],
-              'second_name': state['last_name'],
-              'email': state['email'],
-              'wish_news': state['wish_news'],
+        """, {'first_name': data['first_name'],
+              'second_name': data['last_name'],
+              'email': data['email'],
+              'wish_news': data['wish_news'],
               'tg_id': user_tg_id
               }
                     )
         conn.commit()
+
+
+def user_is_registered(user_tg_id):
+    with conn.cursor() as cur:
+        cur.execute("""
+        SELECT * FROM users
+        WHERE tg_id = %(user_tg_id)s
+        """, {'user_tg_id': user_tg_id}
+                    )
+        return bool(cur.fetchone())
 
 
 def get_books():
@@ -227,8 +237,9 @@ def get_page_numbers_for_menu(book_id, page_number, thresholds):
         return [n[0] for n in cur.fetchall()]
 
 
-if __name__ == '__main__':
+# if __name__ == '__main__':
     # print(chose_books_page(user_tg_id=890681558, book_id=13))
     # print(_select_actual_page(user_tg_id=890681558, book_id=11))
     # print(chose_books_page(user_tg_id=890681558, book_id=11))
-    add_book(title="Тарас Бульба")
+    # add_book(title="Тарас Бульба")
+    # print(user_is_registered(user_tg_id=890681551))
