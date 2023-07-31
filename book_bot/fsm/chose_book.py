@@ -16,7 +16,8 @@ book_id = State()
 @router.message(Command('all_books'))
 async def get_all_books(message: types.Message):
     await message.answer('Список всех книг:')
-    await message.answer(*[f'{key+1}. (id={value[0]}) {value[1]}' for key, value in enumerate(db.get_books())])
+    all_books_list = [f'{key+1}. (id={value[0]}) {value[1]}' for key, value in enumerate(db.get_books())]
+    await message.answer('\n'.join(all_books_list))
 
 
 @router.message(Command('chose_book'), StateFilter(default_state))

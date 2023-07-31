@@ -113,7 +113,9 @@ def _select_actual_page(user_tg_id, book_id):
               'book_id': book_id,
               }
                     )
-        return cur.fetchone()[0]
+        return cur.fetchone()
+        # if cur.fetchone()[0] and cur.fetchone() is not None:
+        #     return cur.fetchone()[0]
 
 
 def chose_books_page(user_tg_id, book_id):
@@ -122,9 +124,10 @@ def chose_books_page(user_tg_id, book_id):
     Creates row if it is not in table yet.
     """
     with conn.cursor() as cur:
-        try:
-            return _select_actual_page(user_tg_id=user_tg_id, book_id=book_id)
-        except():
+        page = _select_actual_page(user_tg_id=user_tg_id, book_id=book_id)
+        if page is not None:
+            return page[0]
+        else:
             cur.execute("""
             INSERT INTO users_books_pages(user_tg_id, book_id, page_number)
             VALUES (%(user_tg_id)s, %(book_id)s, %(page_number)s)
@@ -134,7 +137,35 @@ def chose_books_page(user_tg_id, book_id):
                   }
                         )
             conn.commit()
-            return _select_actual_page(user_tg_id=user_tg_id, book_id=book_id)
+            return _select_actual_page(user_tg_id=user_tg_id, book_id=book_id)[0]
+
+    # try:
+        #     cur.execute("""
+        #     SELECT (page_number) FROM users_books_pages
+        #     WHERE (user_tg_id = %(user_tg_id)s and book_id = %(book_id)s)
+        #     """, {'user_tg_id': user_tg_id,
+        #           'book_id': book_id,
+        #           }
+        #                 )
+        # except():
+        #     cur.execute("""
+        #     INSERT INTO users_books_pages(user_tg_id, book_id, page_number)
+        #     VALUES (%(user_tg_id)s, %(book_id)s, %(page_number)s)
+        #     """, {'user_tg_id': user_tg_id,
+        #           'book_id': book_id,
+        #           'page_number': 1
+        #           }
+        #                 )
+        #     conn.commit()
+        # finally:
+        #     cur.execute("""
+        #     SELECT (page_number) FROM users_books_pages
+        #     WHERE (user_tg_id = %(user_tg_id)s and book_id = %(book_id)s)
+        #     """, {'user_tg_id': user_tg_id,
+        #           'book_id': book_id,
+        #           }
+        #     )
+        # return cur.fetchone()[0]
 
 
 def get_actual_page_content(book_id, page_number):
@@ -197,5 +228,7 @@ def get_page_numbers_for_menu(book_id, page_number, thresholds):
 
 
 if __name__ == '__main__':
-    print(get_page_numbers_for_menu(book_id=10, page_number=330, thresholds={'lower_threshold': 9,
-                                                                             'upper_threshold': 51}))
+    # print(chose_books_page(user_tg_id=890681558, book_id=13))
+    # print(_select_actual_page(user_tg_id=890681558, book_id=11))
+    # print(chose_books_page(user_tg_id=890681558, book_id=11))
+    add_book(title="Тарас Бульба")

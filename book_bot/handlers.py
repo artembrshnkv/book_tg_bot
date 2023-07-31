@@ -23,6 +23,7 @@ async def start_command_handler(message: types.Message):
     await message.answer(lexicon['/start'])
 
 
+
 @router.message(Command('show_books'))
 async def show_books(message: types.Message):
     await message.answer(*db.get_books())
