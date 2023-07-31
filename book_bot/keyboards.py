@@ -53,5 +53,9 @@ def create_menu_kb(book_id, page_number, buttons_per_side):
     return menu_kb.as_markup()
 
 
-if __name__ == '__main__':
-    print(create_menu_kb(book_id=10, page_number=330, buttons_per_side=96))
+# if __name__ == '__main__':
+    # print(len(create_menu_kb(book_id=10, page_number=330, buttons_per_side=96).inline_keyboard))
+    # create_menu_kb(book_id=10, page_number=330, buttons_per_side=96)
+    # create_menu_kb().inline_keyboard.clear()
+    # print(len(create_menu_kb().inline_keyboard))
+

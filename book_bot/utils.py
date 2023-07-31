@@ -16,15 +16,15 @@ def get_correct_page_range(book_id, page_number):
 def get_menu(book_id, page_number, buttons_per_side):
     min_page_number = db.get_min_max_page_number(book_id=book_id, get_min_page=True)
     max_page_number = db.get_min_max_page_number(book_id=book_id, get_max_page=True)
-    if page_number - buttons_per_side < min_page_number:
+    if page_number - buttons_per_side // 2 < min_page_number:
         thresholds = {'lower_threshold': min_page_number - 1,
                       'upper_threshold': buttons_per_side + 1}
-    elif page_number + buttons_per_side > max_page_number:
-        thresholds = {'lower_threshold': max_page_number - buttons_per_side - 1,
+    elif page_number + buttons_per_side // 2 > max_page_number:
+        thresholds = {'lower_threshold': max_page_number - buttons_per_side,
                       'upper_threshold': max_page_number + 1}
     else:
         thresholds = {'lower_threshold': page_number - 49,
-                      'upper_threshold': page_number + 49}
+                      'upper_threshold': page_number + 48}
     return db.get_page_numbers_for_menu(book_id=book_id, page_number=page_number, thresholds=thresholds)
 
 
