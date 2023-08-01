@@ -5,7 +5,8 @@ file_path = 'books/Тарас Бульба.txt'
 punctuation_marks = ('.', ',', '!', '?', ':', ';')
 
 menu = [BotCommand(command='/all_books', description='Список всех книг'),
-        BotCommand(command='/chose_book', description='Панель выбора книги')]
+        BotCommand(command='/chose_book', description='Панель выбора книги'),
+        BotCommand(command='/my_books', description='Книги, которые вы читали')]
 
 
 def get_correct_page_range(book_id, page_number):

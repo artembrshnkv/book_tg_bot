@@ -237,7 +237,19 @@ def get_page_numbers_for_menu(book_id, page_number, thresholds):
         return [n[0] for n in cur.fetchall()]
 
 
-# if __name__ == '__main__':
+def get_my_books(user_tg_id):
+    with conn.cursor() as cur:
+        cur.execute("""
+        SELECT title, page_number FROM users_books_pages
+        JOIN books ON books.id = users_books_pages.book_id
+        WHERE users_books_pages.user_tg_id = %(user_tg_id)s 
+        """, {'user_tg_id': user_tg_id}
+                    )
+        return cur.fetchall()
+
+
+if __name__ == '__main__':
+    print(get_my_books(user_tg_id=890681558))
     # print(chose_books_page(user_tg_id=890681558, book_id=13))
     # print(_select_actual_page(user_tg_id=890681558, book_id=11))
     # print(chose_books_page(user_tg_id=890681558, book_id=11))

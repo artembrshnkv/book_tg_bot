@@ -15,15 +15,23 @@ book_id = State()
 
 @router.message(Command('all_books'))
 async def get_all_books(message: types.Message):
-    await message.answer('Список всех книг:')
+    # await message.answer('Список всех книг:')
     all_books_list = [f'{key+1}. {value[1]}' for key, value in enumerate(db.get_books())]
-    await message.answer('\n'.join(all_books_list))
+    await message.answer('\n'.join(all_books_list) + '\n\n/chose_book - Выбор книги')
 
 
-@router.message(Command('chose_book'), StateFilter(default_state))
+@router.message(Command('chose_book'))
 async def chose_book(message: types.Message):
     await message.answer(text='Выберите номер книги:',
                          reply_markup=kb.create_all_books_kb(user_tg_id=message.from_user.id))
+
+
+@router.message(Command('my_books'))
+async def get_my_books(message: types.Message):
+    my_books = [f'{n[0]}({n[1]})' for n in db.get_my_books(user_tg_id=message.from_user.id)]
+    await message.answer('Книги, которые вы читали:\n\n' + '\n'.join(my_books) +
+                         '\n\n /all_books - Список всех нниг' + '\n /chose_book - Выбрать книгу')
+
 
 # @router.message(StateFilter(book_id), F.text.isdigit())
 # async def show_book(message: types.Message,
