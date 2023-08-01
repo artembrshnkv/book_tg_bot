@@ -16,7 +16,7 @@ dp = Dispatcher(storage=storage)
 
 async def main():
     await bot.set_my_commands(commands=utils.menu)
-    dp.include_routers(handlers.router, registartion.router, add_book.router, chose_book.router)
+    dp.include_routers(handlers.router, add_book.router, chose_book.router)
     await dp.start_polling(bot)
 
 

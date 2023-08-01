@@ -58,3 +58,9 @@ def create_all_books_kb(user_tg_id):
                                                 book_id=value[0],
                                                 user_tg_id=user_tg_id)).pack()) for key, value in enumerate(db.get_books())])
     return books_kb.as_markup()
+
+
+cancel_book_adding = InlineKeyboardMarkup([[
+    InlineKeyboardButton(text='Да', callback_data='yes_cancel'),
+    InlineKeyboardButton(text='Да', callback_data='no_cancel')
+    ]])
